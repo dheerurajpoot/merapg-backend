@@ -28,7 +28,7 @@ app.get("/", function (req, res) {
 });
 
 //api urls
-app.use("/api/v1/user", userRoute);
+app.use("/api/user", userRoute);
 
 app.listen(process.env.PORT, () => {
 	console.log(`Server is listening on port ${process.env.PORT}`);

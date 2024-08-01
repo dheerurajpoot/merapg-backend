@@ -4,8 +4,8 @@ import { User } from "../models/userModel.js";
 
 export const register = async (req, res) => {
 	try {
-		const { name, mobile, email, password } = req.body;
-		if (!name || !mobile || !email || !password) {
+		const { name, email, password } = req.body;
+		if (!name || !email || !password) {
 			return res.status(401).json({
 				message: "All fields are required !",
 				success: false,
@@ -23,7 +23,6 @@ export const register = async (req, res) => {
 
 		await User.create({
 			name,
-			mobile,
 			email,
 			password: hashedPassword,
 		});
@@ -37,7 +36,6 @@ export const register = async (req, res) => {
 };
 
 // user login
-
 export const logIn = async (req, res) => {
 	try {
 		const { email, password } = req.body;
@@ -70,12 +68,22 @@ export const logIn = async (req, res) => {
 		const token = jwt.sign(tokenData, process.env.JWT_SECRET_KEY, {
 			expiresIn: "3d",
 		});
+
 		return res
 			.status(201)
-			.cookie("token", token, { expiresIn: "3d", httpOnly: true })
+			.cookie("token", token, {
+				expiresIn: "3d",
+				httpOnly: true,
+			})
 			.json({
-				message: `Welcome back: ${user.name}`,
-				user,
+				message: `Welcome: ${user.name}!`,
+				user: {
+					_id: user?._id,
+					name: user?.name,
+					email: user?.email,
+					profilePic: user?.profilePic,
+					token: token,
+				},
 				success: true,
 			});
 	} catch (error) {
@@ -90,35 +98,14 @@ export const logOut = (req, res) => {
 		success: true,
 	});
 };
-// get profile data
-export const getProfile = async (req, res) => {
-	try {
-		const id = req.params.id;
-		const user = await User.findOne({ _id: id }).select("-password");
-		return res.status(200).json({
-			user,
-		});
-	} catch (error) {
-		console.log(error);
-		return res.status(500).json({ error: "Internal server error" });
-	}
-};
 
 // Update user profile
 export const updateUserProfile = async (req, res) => {
 	try {
 		const { id } = req.params;
-		const { name, mobile, email, profilePic } = req.body;
-
-		// if (!name || !username || !email || !userDescription || !profilePic) {
-		// 	return res.status(401).json({
-		// 		message: "All fields are required!",
-		// 		success: false,
-		// 	});
-		// }
+		const { name, email, profilePic } = req.body;
 
 		const user = await User.findById(id);
-
 		if (!user) {
 			return res.status(404).json({
 				message: "User not found",
@@ -127,7 +114,6 @@ export const updateUserProfile = async (req, res) => {
 		}
 
 		user.name = name;
-		user.mobile = mobile;
 		user.email = email;
 		user.profilePic = profilePic;
 
