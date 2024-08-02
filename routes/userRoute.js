@@ -2,7 +2,7 @@ import express from "express";
 import { logIn, logOut, register } from "../controllers/userController.js";
 
 const router = express.Router();
-router.route("/register").post(register);
-router.route("/login").post(logIn);
-router.route("/logout").get(logOut);
+router.post("/register", register);
+router.post("/login", logIn);
+router.get("/logout", logOut);
 export default router;
