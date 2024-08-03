@@ -22,7 +22,7 @@ const propertySchema = new mongoose.Schema(
 			required: true,
 		},
 		area: {
-			type: Number,
+			type: String,
 		},
 		location: {
 			type: String,
@@ -33,6 +33,10 @@ const propertySchema = new mongoose.Schema(
 		},
 		ownerName: {
 			type: String,
+			required: true,
+		},
+		createdBy: {
+			type: mongoose.Schema.Types.ObjectId,
 			required: true,
 		},
 		ownerContact: {

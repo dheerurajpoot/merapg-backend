@@ -1,10 +1,6 @@
 import { Property } from "../models/propertyModel.js";
-import cloudinary from "cloudinary";
-cloudinary.config({
-	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-	api_key: process.env.CLOUDINARY_API_KEY,
-	api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+import { imgUpload } from "../utils/cloudinary.js";
+import jwt from "jsonwebtoken";
 
 export const addProperty = async (req, res) => {
 	try {
@@ -21,21 +17,39 @@ export const addProperty = async (req, res) => {
 			ownerContact,
 		} = req.body;
 
-		let thumbnailUrl = "";
-		// if (req.files.thumbnail) {
-		// 	const thumbnailResult = await cloudinary.uploader.upload(
-		// 		req.files.thumbnail[0].path
-		// 	);
-		// 	thumbnailUrl = thumbnailResult.secure_url;
-		// }
+		const token = req.cookies.token;
+		if (!token) {
+			return res
+				.status(401)
+				.json({ message: "Authentication Failed, Login Again!" });
+		}
+		const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
-		const imagesUrls = [];
-		// if (req.files.images) {
-		// 	for (const image of req.files.images) {
-		// 		const result = await cloudinary.uploader.upload(image.path);
-		// 		imagesUrls.push(result.secure_url);
-		// 	}
-		// }
+		const thumbnailLocalPath = req.files?.thumbnail[0]?.path;
+		if (!thumbnailLocalPath) {
+			res.status(401).json({
+				message: "Thumbnail is Required!",
+				success: false,
+			});
+		}
+		let imagesLocalPath = [];
+		if (
+			req.files &&
+			Array.isArray(req.files.images) &&
+			req.files.images.length > 0
+		) {
+			for (const image of req.files?.images) {
+				imagesLocalPath.push(image?.path);
+			}
+		}
+
+		const thumbnail = await imgUpload(thumbnailLocalPath);
+
+		let imagesUrls = [];
+		for (const img of imagesLocalPath) {
+			const imgRes = await imgUpload(img);
+			imagesUrls.push(imgRes.url);
+		}
 
 		const newProperty = new Property({
 			title,
@@ -48,15 +62,19 @@ export const addProperty = async (req, res) => {
 			services,
 			ownerName,
 			ownerContact,
-			thumbnail: thumbnailUrl,
-			images: imagesUrls,
+			createdBy: decodedToken.userID,
+			thumbnail: thumbnail?.url,
+			images: imagesUrls || [],
 		});
 
-		await newProperty.save();
-		console.log(newProperty);
-		res.status(201).json({ message: "Property added successfully!" });
+		const property = await newProperty.save();
+		res.status(201).json({
+			message: "Property added successfully!",
+			property,
+			success: true,
+		});
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ message: "Server error" });
+		res.status(500).json({ message: "Internal Server error" });
 	}
 };

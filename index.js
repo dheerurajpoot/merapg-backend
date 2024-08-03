@@ -9,7 +9,8 @@ import propertyRoute from "./routes/propertyRoute.js";
 import passport from "passport";
 import session from "express-session";
 import "./utils/passport.js";
-
+import dotenv from "dotenv";
+dotenv.config();
 const app = express();
 
 dbConnect();
