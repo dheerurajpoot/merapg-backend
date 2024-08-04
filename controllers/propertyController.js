@@ -1,6 +1,7 @@
 import { Property } from "../models/propertyModel.js";
 import { imgUpload } from "../utils/cloudinary.js";
 import jwt from "jsonwebtoken";
+import { getUserId } from "../utils/getTokenId.js";
 
 export const addProperty = async (req, res) => {
 	try {
@@ -18,12 +19,7 @@ export const addProperty = async (req, res) => {
 		} = req.body;
 
 		const token = req.cookies.token;
-		if (!token) {
-			return res
-				.status(401)
-				.json({ message: "Authentication Failed, Login Again!" });
-		}
-		const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+		const userId = await getUserId(token);
 
 		const thumbnailLocalPath = req.files?.thumbnail[0]?.path;
 		if (!thumbnailLocalPath) {
@@ -62,7 +58,7 @@ export const addProperty = async (req, res) => {
 			services,
 			ownerName,
 			ownerContact,
-			createdBy: decodedToken.userID,
+			createdBy: userId,
 			thumbnail: thumbnail?.url,
 			images: imagesUrls || [],
 		});

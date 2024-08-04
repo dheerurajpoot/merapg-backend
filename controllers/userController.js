@@ -1,6 +1,8 @@
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { User } from "../models/userModel.js";
+import { getUserId } from "../utils/getTokenId.js";
+import { imgUpload } from "../utils/cloudinary.js";
 
 export const register = async (req, res) => {
 	try {
@@ -32,6 +34,10 @@ export const register = async (req, res) => {
 		});
 	} catch (error) {
 		console.log(error);
+		return res.status(500).json({
+			message: "Internal server error, Try again later!",
+			success: false,
+		});
 	}
 };
 
@@ -88,6 +94,10 @@ export const logIn = async (req, res) => {
 			});
 	} catch (error) {
 		console.log(error);
+		return res.status(500).json({
+			message: "Internal server error, Try again later!",
+			success: false,
+		});
 	}
 };
 
@@ -99,13 +109,40 @@ export const logOut = (req, res) => {
 	});
 };
 
+// get user profile
+export const getProfile = async (req, res) => {
+	try {
+		const token = req.cookies.token;
+		const userId = await getUserId(token);
+		const user = await User.findById(userId).select("-password");
+		if (!user) {
+			return res.status(404).json({
+				message: "User not found",
+				success: false,
+			});
+		}
+		return res.status(200).json({
+			message: "Profile found ",
+			success: true,
+			user,
+		});
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({
+			message: "Internal server error",
+			success: false,
+		});
+	}
+};
+
 // Update user profile
 export const updateUserProfile = async (req, res) => {
 	try {
-		const { id } = req.params;
-		const { name, email, profilePic } = req.body;
+		const token = req.cookies.token;
+		const userId = await getUserId(token);
+		const { name, email } = req.body;
 
-		const user = await User.findById(id);
+		const user = await User.findById(userId);
 		if (!user) {
 			return res.status(404).json({
 				message: "User not found",
@@ -113,9 +150,13 @@ export const updateUserProfile = async (req, res) => {
 			});
 		}
 
+		const profileLocalPath = req.files?.profilePic[0]?.path;
+		console.log(profileLocalPath);
+		const profileImg = await imgUpload(profileLocalPath);
+
 		user.name = name;
 		user.email = email;
-		user.profilePic = profilePic;
+		user.profilePic = profileImg?.url || "";
 
 		await user.save();
 
