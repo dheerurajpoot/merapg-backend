@@ -151,7 +151,6 @@ export const updateUserProfile = async (req, res) => {
 		}
 
 		const profileLocalPath = req.files?.profilePic[0]?.path;
-		console.log(profileLocalPath);
 		const profileImg = await imgUpload(profileLocalPath);
 
 		user.name = name;

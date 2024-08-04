@@ -1,6 +1,5 @@
 import { Property } from "../models/propertyModel.js";
 import { imgUpload } from "../utils/cloudinary.js";
-import jwt from "jsonwebtoken";
 import { getUserId } from "../utils/getTokenId.js";
 
 export const addProperty = async (req, res) => {
@@ -67,6 +66,32 @@ export const addProperty = async (req, res) => {
 		res.status(201).json({
 			message: "Property added successfully!",
 			property,
+			success: true,
+		});
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Internal Server error" });
+	}
+};
+
+// get properties
+
+export const getProperties = async (req, res) => {
+	try {
+		const { city } = req.query;
+		const query = city ? { location: { $regex: city, $options: "i" } } : {};
+		const properties = await Property.find(query);
+
+		if (!properties.length) {
+			return res.status(404).json({
+				message: "No properties found in the specified city!",
+				success: false,
+			});
+		}
+
+		res.status(200).json({
+			message: "Properties found!",
+			properties,
 			success: true,
 		});
 	} catch (error) {
