@@ -3,6 +3,7 @@ import {
 	addProperty,
 	getProperties,
 	getProperty,
+	getUserProperty,
 } from "../controllers/propertyController.js";
 import { upload } from "../middleware/multer.middleware.js";
 
@@ -18,5 +19,6 @@ router.post(
 );
 router.get("/", getProperties);
 router.get("/:id", getProperty);
+router.post("/userprop", getUserProperty);
 
 export default router;

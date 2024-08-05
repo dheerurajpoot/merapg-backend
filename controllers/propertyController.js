@@ -121,3 +121,27 @@ export const getProperty = async (req, res) => {
 		res.status(500).json({ message: "Internal Server error" });
 	}
 };
+
+// get property by userId
+export const getUserProperty = async (req, res) => {
+	try {
+		const { userId } = req.body;
+		const properties = await Property.find({ createdBy: userId });
+
+		if (!properties || properties.length === 0) {
+			return res.status(404).json({
+				message: "No properties found",
+				success: false,
+			});
+		}
+
+		res.status(200).json({
+			message: "Properties found!",
+			properties,
+			success: true,
+		});
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Internal Server error" });
+	}
+};
