@@ -2,6 +2,7 @@ import express from "express";
 import {
 	addProperty,
 	getProperties,
+	getProperty,
 } from "../controllers/propertyController.js";
 import { upload } from "../middleware/multer.middleware.js";
 
@@ -16,5 +17,6 @@ router.post(
 	addProperty
 );
 router.get("/", getProperties);
+router.get("/:id", getProperty);
 
 export default router;

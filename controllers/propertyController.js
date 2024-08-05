@@ -99,3 +99,25 @@ export const getProperties = async (req, res) => {
 		res.status(500).json({ message: "Internal Server error" });
 	}
 };
+
+// get property by id
+export const getProperty = async (req, res) => {
+	try {
+		const { id } = req.params;
+		const property = await Property.findById(id);
+		if (!property) {
+			return res.status(404).json({
+				message: "No properties found",
+				success: false,
+			});
+		}
+		res.status(200).json({
+			message: "Properties found!",
+			property,
+			success: true,
+		});
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Internal Server error" });
+	}
+};
