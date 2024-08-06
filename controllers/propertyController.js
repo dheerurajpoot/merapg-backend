@@ -78,13 +78,20 @@ export const addProperty = async (req, res) => {
 
 export const getProperties = async (req, res) => {
 	try {
-		const { city } = req.query;
-		const query = city ? { location: { $regex: city, $options: "i" } } : {};
+		const { city, category } = req.query;
+
+		const query = {};
+		if (city) {
+			query.location = { $regex: city, $options: "i" };
+		}
+		if (category) {
+			query.category = { $regex: category, $options: "i" };
+		}
 		const properties = await Property.find(query);
 
 		if (!properties.length) {
 			return res.status(404).json({
-				message: "No properties found in the specified city!",
+				message: "No properties found!",
 				success: false,
 			});
 		}
