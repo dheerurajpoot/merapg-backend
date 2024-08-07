@@ -78,7 +78,7 @@ export const addProperty = async (req, res) => {
 
 export const getProperties = async (req, res) => {
 	try {
-		const { city, category } = req.query;
+		const { city, category, budget } = req.query;
 
 		const query = {};
 		if (city) {
@@ -86,6 +86,10 @@ export const getProperties = async (req, res) => {
 		}
 		if (category) {
 			query.category = { $regex: category, $options: "i" };
+		}
+		if (budget) {
+			const [minBudget, maxBudget] = budget.split("-").map(Number);
+			query.rent = { $gte: minBudget, $lte: maxBudget };
 		}
 		const properties = await Property.find(query);
 
