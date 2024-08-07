@@ -10,11 +10,25 @@ import passport from "passport";
 import session from "express-session";
 import "./utils/passport.js";
 import dotenv from "dotenv";
+import morgan from "morgan";
 dotenv.config();
 const app = express();
 
 dbConnect();
 
+app.use((req, res, next) => {
+	res.header("Access-Control-Allow-Origin", "*");
+	next();
+});
+app.use(
+	cors({
+		origin: "*",
+		methods: "GET, POST, PATCH, DELETE, PUT",
+		credentials: true,
+	})
+);
+
+app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.json());
@@ -31,19 +45,12 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(
-	cors({
-		origin: `${process.env.FRONTEND_URL}`,
-		credentials: true,
-	})
-);
-
 app.get("/", function (req, res) {
 	res.send("Server is running...");
 });
 
 app.use("/api/user", userRoute);
-app.use("/api/auth", authRoute);
+app.use("/auth", authRoute);
 app.use("/api/properties", propertyRoute);
 
 app.listen(process.env.PORT, () => {
