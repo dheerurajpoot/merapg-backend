@@ -11,7 +11,9 @@ import session from "express-session";
 import "./utils/passport.js";
 import dotenv from "dotenv";
 import morgan from "morgan";
+import passportConfig from "./utils/passport.js";
 dotenv.config();
+
 const app = express();
 
 dbConnect();
@@ -44,6 +46,7 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+passportConfig(passport);
 
 app.get("/", function (req, res) {
 	res.send("Server is running...");

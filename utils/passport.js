@@ -1,46 +1,52 @@
-import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { User } from "../models/userModel.js";
 
-passport.use(
-	new GoogleStrategy(
-		{
-			clientID: process.env.GOOGLE_CLIENT_ID,
-			clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-			callbackURL: `${process.env.FRONTEND_URL}/api/auth/google/callback`,
-		},
-		async (accessToken, refreshToken, profile, done) => {
-			console.log("running....");
-			try {
-				let user = await User.findOne({ googleId: profile.id });
+const cloudClientId = process.env.GOOGLE_CLIENT_ID;
+const cloudClientSecret = process.env.GOOGLE_CLIENT_SECRET;
 
-				if (!user) {
-					user = new User({
-						googleId: profile.id,
+const passportConfig = (passport) => {
+	passport.use(
+		new GoogleStrategy(
+			{
+				clientID: cloudClientId,
+				clientSecret: cloudClientSecret,
+				callbackURL: "http://localhost:3000/auth/google/callback",
+			},
+			async (accessToken, refreshToken, profile, done) => {
+				try {
+					const existingUser = await User.findOne({
+						email: profile.emails[0].value,
+					});
+					if (existingUser) {
+						return done(null, existingUser);
+					}
+					const newUser = new User({
 						name: profile.displayName,
 						email: profile.emails[0].value,
-						profilePic: profile.photos[0].value,
+						profilePic: profile.photos[0].value || "",
+						password: Date.now(), //dummy password
 					});
-					await user.save();
+					await newUser.save();
+					done(null, newUser);
+				} catch (error) {
+					done(error, null);
 				}
-
-				done(null, user);
-			} catch (error) {
-				done(error, false);
 			}
+		)
+	);
+
+	passport.serializeUser((user, done) => {
+		done(null, user._id);
+	});
+
+	passport.deserializeUser(async (id, done) => {
+		try {
+			const user = await User.findById(id);
+			done(null, user);
+		} catch (error) {
+			done(error, false);
 		}
-	)
-);
+	});
+};
 
-passport.serializeUser((user, done) => {
-	done(null, user.id);
-});
-
-passport.deserializeUser(async (id, done) => {
-	try {
-		const user = await User.findById(id);
-		done(null, user);
-	} catch (error) {
-		done(error, false);
-	}
-});
+export default passportConfig;
