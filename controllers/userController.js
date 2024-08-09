@@ -69,7 +69,7 @@ export const logIn = async (req, res) => {
 		//tokens
 
 		const tokenData = {
-			userID: user._id,
+			id: user._id,
 		};
 		const token = jwt.sign(tokenData, process.env.JWT_SECRET_KEY, {
 			expiresIn: "3d",
@@ -149,20 +149,28 @@ export const updateUserProfile = async (req, res) => {
 				success: false,
 			});
 		}
-
-		const profileLocalPath = req.files?.profilePic[0]?.path;
-		const profileImg = await imgUpload(profileLocalPath);
-
+		let profileImg;
+		if (req.files?.profilePic) {
+			const profileLocalPath = req.files?.profilePic[0]?.path;
+			profileImg = await imgUpload(profileLocalPath);
+		}
 		user.name = name;
 		user.email = email;
-		user.profilePic = profileImg?.url || "";
-
+		if (profileImg?.url !== "") {
+			user.profilePic = profileImg?.url || "";
+		}
 		await user.save();
 
 		return res.status(200).json({
 			message: "Profile updated successfully",
 			success: true,
-			user,
+			user: {
+				_id: user?._id,
+				name: user?.name,
+				email: user?.email,
+				profilePic: user?.profilePic,
+				token: token,
+			},
 		});
 	} catch (error) {
 		console.log(error);
