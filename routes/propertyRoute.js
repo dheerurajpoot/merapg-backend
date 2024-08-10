@@ -1,6 +1,7 @@
 import express from "express";
 import {
 	addProperty,
+	deleteProperty,
 	getProperties,
 	getProperty,
 	getUserProperty,
@@ -20,5 +21,6 @@ router.post(
 router.get("/", getProperties);
 router.get("/:id", getProperty);
 router.post("/userprop", getUserProperty);
+router.delete("/", deleteProperty);
 
 export default router;

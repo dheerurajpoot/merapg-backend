@@ -23,6 +23,13 @@ const userSchema = new mongoose.Schema(
 			required: true,
 			trim: true,
 		},
+		forgotPasswordToken: {
+			type: String,
+		},
+		forgotPasswordTokenExpiry: {
+			type: Date,
+			default: Date.now(),
+		},
 	},
 	{ timestamps: true }
 );
