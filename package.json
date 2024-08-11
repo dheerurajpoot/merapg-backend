@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Backend for MeraPG site",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "dev": "node index.js",
     "start": "nodemon index.js"
