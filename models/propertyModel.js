@@ -49,6 +49,10 @@ const propertySchema = new mongoose.Schema(
 		images: {
 			type: [String],
 		},
+		isBooked: {
+			type: Boolean,
+			default: false,
+		},
 	},
 	{ timestamps: true }
 );

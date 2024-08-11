@@ -80,7 +80,7 @@ export const getProperties = async (req, res) => {
 	try {
 		const { city, category, budget } = req.query;
 
-		const query = {};
+		const query = { isBooked: false };
 		if (city) {
 			query.location = { $regex: city, $options: "i" };
 		}
@@ -171,7 +171,40 @@ export const deleteProperty = async (req, res) => {
 		}
 
 		res.status(200).json({
-			message: "Properties Deleted!",
+			message: "Property Deleted!",
+			property,
+			success: true,
+		});
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Internal Server error" });
+	}
+};
+
+// property booking status
+export const isBooked = async (req, res) => {
+	try {
+		const { pId } = req.query;
+
+		// Find the property by ID
+		const property = await Property.findById(pId);
+
+		// If property not found, return 404
+		if (!property) {
+			return res.status(404).json({
+				message: "No properties found",
+				success: false,
+			});
+		}
+
+		// Toggle the isBooked field
+		property.isBooked = !property.isBooked;
+
+		// Save the updated property
+		await property.save();
+
+		res.status(200).json({
+			message: `Property ${property.isBooked ? "Booked" : "Unbooked"}!`,
 			property,
 			success: true,
 		});

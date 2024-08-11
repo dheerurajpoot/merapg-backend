@@ -5,6 +5,7 @@ import {
 	getProperties,
 	getProperty,
 	getUserProperty,
+	isBooked,
 } from "../controllers/propertyController.js";
 import { upload } from "../middleware/multer.middleware.js";
 
@@ -22,5 +23,6 @@ router.get("/", getProperties);
 router.get("/:id", getProperty);
 router.post("/userprop", getUserProperty);
 router.delete("/", deleteProperty);
+router.put("/isbooked", isBooked);
 
 export default router;

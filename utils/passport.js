@@ -10,7 +10,7 @@ const passportConfig = (passport) => {
 			{
 				clientID: cloudClientId,
 				clientSecret: cloudClientSecret,
-				callbackURL: "http://localhost:3000/auth/google/callback",
+				callbackURL: `${process.env.BACKEND_URL}/auth/google/callback`,
 			},
 			async (accessToken, refreshToken, profile, done) => {
 				try {
