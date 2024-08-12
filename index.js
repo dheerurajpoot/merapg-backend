@@ -19,12 +19,12 @@ const app = express();
 dbConnect();
 
 app.use((req, res, next) => {
-	res.header("Access-Control-Allow-Origin", "http://localhost:5173");
+	res.header("Access-Control-Allow-Origin", `${process.env.FRONTEND_URL}`);
 	next();
 });
 app.use(
 	cors({
-		origin: "http://localhost:5173",
+		origin: `${process.env.FRONTEND_URL}`,
 		methods: "GET, POST, PATCH, DELETE, PUT",
 		credentials: true,
 	})

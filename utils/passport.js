@@ -1,8 +1,8 @@
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { User } from "../models/userModel.js";
 
-const cloudClientId = process.env.GOOGLE_CLIENT_ID;
-const cloudClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+const cloudClientId = `${process.env.GOOGLE_CLIENT_ID}`;
+const cloudClientSecret = `${process.env.GOOGLE_CLIENT_SECRET}`;
 
 const passportConfig = (passport) => {
 	passport.use(
@@ -30,6 +30,7 @@ const passportConfig = (passport) => {
 					done(null, newUser);
 				} catch (error) {
 					done(error, null);
+					console.log(error);
 				}
 			}
 		)
