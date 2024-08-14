@@ -154,12 +154,11 @@ export const updateUserProfile = async (req, res) => {
 		if (req.files?.profilePic) {
 			const profileLocalPath = req.files?.profilePic[0]?.path;
 			profileImg = await imgUpload(profileLocalPath);
-			console.log("profile pic: ", profileImg);
 		}
 		user.name = name;
 		user.email = email;
 		if (profileImg?.url !== "") {
-			user.profilePic = profileImg?.url || "";
+			user.profilePic = profileImg?.secure_url || "";
 		}
 		await user.save();
 

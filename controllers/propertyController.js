@@ -43,9 +43,8 @@ export const addProperty = async (req, res) => {
 		let imagesUrls = [];
 		for (const img of imagesLocalPath) {
 			const imgRes = await imgUpload(img);
-			imagesUrls.push(imgRes?.url);
+			imagesUrls.push(imgRes?.secure_url);
 		}
-
 		const newProperty = new Property({
 			title,
 			description,
@@ -58,7 +57,7 @@ export const addProperty = async (req, res) => {
 			ownerName,
 			ownerContact,
 			createdBy: userId,
-			thumbnail: thumbnail?.url || "",
+			thumbnail: thumbnail?.secure_url || "",
 			images: imagesUrls || [],
 		});
 
