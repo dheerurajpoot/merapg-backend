@@ -104,10 +104,14 @@ export const logIn = async (req, res) => {
 
 // logout
 export const logOut = (req, res) => {
-	return res.cookie("token", "", { expiresIn: new Date(Date.now()) }).json({
-		message: "You have logged out successfully",
-		success: true,
-	});
+	return res
+		.status(201)
+		.clearCookie("token", { expires: new Date(1), httpOnly: true })
+		.clearCookie("connect.sid", { expires: new Date(1), httpOnly: true })
+		.json({
+			message: "Log out successfully",
+			success: true,
+		});
 };
 
 // get user profile
