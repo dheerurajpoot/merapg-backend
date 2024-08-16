@@ -32,7 +32,9 @@ router.get("/me", async (req, res) => {
 		const token = req.cookies.token;
 		const user = req.user;
 		if (!user) {
-			return res.status(404).json({ message: "User not found" });
+			return res
+				.status(404)
+				.json({ message: "User not found", success: false });
 		}
 
 		return res.status(200).json({
