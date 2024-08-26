@@ -18,15 +18,6 @@ const app = express();
 
 dbConnect();
 
-app.use((req, res, next) => {
-	res.header("Access-Control-Allow-Origin", [
-		"https://merapg.com",
-		"https://www.merapg.com",
-		"http://localhost:5173",
-		"https://merapg.vercel.app",
-	]);
-	next();
-});
 app.use(
 	cors({
 		origin: [
