@@ -18,18 +18,25 @@ const app = express();
 
 dbConnect();
 
-app.use((req, res, next) => {
-	res.header("Access-Control-Allow-Origin", "https://www.merapg.com");
-	next();
-});
+const allowedOrigins = [
+	"https://merapg.com",
+	"https://www.merapg.com",
+	"http://localhost:5173",
+	"https://merapg.vercel.app",
+];
+
 app.use(
 	cors({
-		origin: [
-			"https://merapg.com",
-			"https://www.merapg.com",
-			"http://localhost:5173",
-			"https://merapg.vercel.app",
-		],
+		origin: function (origin, callback) {
+			// Allow requests with no origin, like mobile apps or curl requests
+			if (!origin) return callback(null, true);
+			if (allowedOrigins.indexOf(origin) === -1) {
+				const msg =
+					"The CORS policy for this site does not allow access from the specified Origin.";
+				return callback(new Error(msg), false);
+			}
+			return callback(null, true);
+		},
 		methods: "GET, POST, PATCH, DELETE, PUT",
 		credentials: true,
 	})
