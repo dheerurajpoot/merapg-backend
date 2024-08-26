@@ -17,7 +17,6 @@ dotenv.config();
 const app = express();
 
 dbConnect();
-app.options("*", cors());
 
 app.use(
 	cors({
@@ -29,7 +28,7 @@ app.use(
 		],
 		methods: "GET, POST, PATCH, DELETE, PUT",
 		credentials: true,
-		allowedHeaders: ["Content-Type", "Authorization"],
+		allowedHeaders: ["Content-Type", "Authorization", "X-Custom-Header"],
 	})
 );
 
