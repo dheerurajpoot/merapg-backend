@@ -18,7 +18,7 @@ const app = express();
 
 dbConnect();
 
-app.use((req, req, next) => {
+app.use((req, res, next) => {
 	console.log("Origin: ", req.headers.origin);
 	console.log("Host: ", req.headers.host);
 	next();
