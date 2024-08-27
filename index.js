@@ -19,7 +19,7 @@ const app = express();
 dbConnect();
 
 app.use((req, res, next) => {
-	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Origin", "https://www.merapg.com");
 	res.header(
 		"Access-Control-Allow-Headers",
 		"Origin, X-Requested-With, Content-Type, Accept"
@@ -29,7 +29,7 @@ app.use((req, res, next) => {
 
 app.use(
 	cors({
-		origin: "*",
+		origin: "https://www.merapg.com",
 		methods: "GET, POST, PATCH, DELETE, PUT",
 		credentials: true,
 		allowedHeaders: ["Content-Type", "Authorization", "X-Custom-Header"],
