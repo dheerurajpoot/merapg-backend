@@ -1,6 +1,6 @@
 import express from "express";
 import cookieParser from "cookie-parser";
-import cors from "cors";
+// import cors from "cors";
 import bodyParser from "body-parser";
 import dbConnect from "./utils/connectDB.js";
 import userRoute from "./routes/userRoute.js";
@@ -18,19 +18,19 @@ const app = express();
 
 dbConnect();
 
-app.use(
-	cors({
-		origin: [
-			"https://merapg.com",
-			"https://www.merapg.com",
-			"http://localhost:5173",
-			"https://merapg.vercel.app",
-		],
-		methods: "GET, POST, PATCH, DELETE, PUT",
-		credentials: true,
-		allowedHeaders: ["Content-Type", "Authorization", "X-Custom-Header"],
-	})
-);
+// app.use(
+// 	cors({
+// 		origin: [
+// 			"https://merapg.com",
+// 			"https://www.merapg.com",
+// 			"http://localhost:5173",
+// 			"https://merapg.vercel.app",
+// 		],
+// 		methods: "GET, POST, PATCH, DELETE, PUT",
+// 		credentials: true,
+// 		allowedHeaders: ["Content-Type", "Authorization", "X-Custom-Header"],
+// 	})
+// );
 
 app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: true }));
