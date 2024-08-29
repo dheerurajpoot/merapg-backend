@@ -18,6 +18,17 @@ const app = express();
 
 dbConnect();
 
+app.use((req, res, next) => {
+	res.set({
+		"Access-Control-Allow-Origin": "https://www.merapg.com",
+		"Access-Control-Allow-Methods": "https://www.merapg.com",
+		"Access-Control-Allow-Headers":
+			"'Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token'",
+	});
+
+	next();
+});
+
 app.use(
 	cors({
 		origin: "https://www.merapg.com",
