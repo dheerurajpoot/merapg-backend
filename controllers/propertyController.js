@@ -1,6 +1,7 @@
 import { Property } from "../models/propertyModel.js";
 import { imgUpload } from "../utils/cloudinary.js";
 import { getUserId } from "../utils/getTokenId.js";
+import { v2 as cloudinary } from "cloudinary";
 
 export const addProperty = async (req, res) => {
 	try {
@@ -160,7 +161,7 @@ export const getUserProperty = async (req, res) => {
 export const deleteProperty = async (req, res) => {
 	try {
 		const { pId } = req.query;
-		const property = await Property.findByIdAndDelete({ _id: pId });
+		const property = await Property.findById(pId);
 
 		if (!property) {
 			return res.status(404).json({
@@ -168,6 +169,23 @@ export const deleteProperty = async (req, res) => {
 				success: false,
 			});
 		}
+
+		// Extract public IDs from the URLs
+		const thumbnailPublicId = property.thumbnail
+			.split("/")
+			.slice(-1)[0]
+			.split(".")[0];
+		const imagesPublicIds = property.images.map(
+			(img) => img.split("/").slice(-1)[0].split(".")[0]
+		);
+
+		// Delete images from Cloudinary
+		await cloudinary.uploader.destroy(thumbnailPublicId);
+		for (const imgId of imagesPublicIds) {
+			await cloudinary.uploader.destroy(imgId);
+		}
+
+		await Property.findByIdAndDelete(pId);
 
 		res.status(200).json({
 			message: "Property Deleted!",
