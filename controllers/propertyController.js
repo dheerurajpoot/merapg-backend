@@ -1,3 +1,4 @@
+import { generateSitemap } from "../generateSitemap.js";
 import { Property } from "../models/propertyModel.js";
 import { imgUpload } from "../utils/cloudinary.js";
 import { getUserId } from "../utils/getTokenId.js";
@@ -63,6 +64,7 @@ export const addProperty = async (req, res) => {
 		});
 
 		const property = await newProperty.save();
+		await generateSitemap();
 		res.status(201).json({
 			message: "Property added successfully!",
 			property,

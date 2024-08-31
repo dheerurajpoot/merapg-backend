@@ -11,8 +11,13 @@ import session from "express-session";
 import "./utils/passport.js";
 import dotenv from "dotenv";
 import morgan from "morgan";
+import path from "path";
+import { fileURLToPath } from "url";
 import passportConfig from "./utils/passport.js";
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
@@ -36,6 +41,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(cookieParser());
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use(
 	session({
