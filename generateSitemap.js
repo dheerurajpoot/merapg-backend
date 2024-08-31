@@ -25,7 +25,7 @@ const generateDynamicRoutes = async () => {
 	const propertyIds = await fetchPropertyIds();
 	const dynamicRoutes = propertyIds.map((id) => ({
 		url: `/property/${id}`,
-		changefreq: "daily",
+		changefreq: "weekly",
 		priority: 0.8,
 	}));
 	return dynamicRoutes;
