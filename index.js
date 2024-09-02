@@ -25,11 +25,7 @@ dbConnect();
 
 app.use(
 	cors({
-		origin: [
-			"https://www.merapg.com",
-			"https://merapg.com",
-			"http://localhost:5173",
-		],
+		origin: "https://www.merapg.com",
 		methods: "GET, POST, PATCH, DELETE, PUT",
 		credentials: true,
 		allowedHeaders: ["Content-Type", "Authorization", "X-Custom-Header"],
