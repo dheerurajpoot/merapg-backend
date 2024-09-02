@@ -22,6 +22,13 @@ export const addProperty = async (req, res) => {
 		const token = req.cookies.token;
 		const userId = await getUserId(token);
 
+		if (!title && !location && !ownerContact) {
+			return res.status(301).json({
+				message: "All Fields are Required!",
+				success: false,
+			});
+		}
+
 		const thumbnailLocalPath = req.files?.thumbnail[0]?.path;
 		if (!thumbnailLocalPath) {
 			res.status(401).json({
