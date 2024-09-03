@@ -22,38 +22,42 @@ export const addProperty = async (req, res) => {
 		const token = req.cookies.token;
 		const userId = await getUserId(token);
 
-		if (!title && !location && !ownerContact) {
-			return res.status(301).json({
-				message: "All Fields are Required!",
+		// Data validation
+		if (!title || !location || !ownerContact) {
+			return res.status(400).json({
+				message: "All Fields are required!",
 				success: false,
 			});
 		}
 
-		const thumbnailLocalPath = req.files?.thumbnail[0]?.path;
-		if (!thumbnailLocalPath) {
-			res.status(401).json({
-				message: "Thumbnail is Required!",
-				success: false,
-			});
-		}
+		// Getting files from body
 		let imagesLocalPath = [];
 		if (
 			req.files &&
 			Array.isArray(req.files.images) &&
 			req.files.images.length > 0
 		) {
-			for (const image of req.files?.images) {
-				imagesLocalPath.push(image?.path);
+			for (const image of req.files.images) {
+				imagesLocalPath.push(image.path);
 			}
 		}
 
-		const thumbnail = await imgUpload(thumbnailLocalPath);
-
+		// Uploading images to Cloudinary
 		let imagesUrls = [];
 		for (const img of imagesLocalPath) {
 			const imgRes = await imgUpload(img);
-			imagesUrls.push(imgRes?.secure_url);
+			if (!imgRes || !imgRes.secure_url) {
+				return res
+					.status(500)
+					.json({
+						message: "Failed to upload images",
+						success: false,
+					});
+			}
+			imagesUrls.push(imgRes.secure_url);
 		}
+
+		// Create a new property
 		const newProperty = new Property({
 			title,
 			description,
@@ -66,12 +70,12 @@ export const addProperty = async (req, res) => {
 			ownerName,
 			ownerContact,
 			createdBy: userId,
-			thumbnail: thumbnail?.secure_url || "",
-			images: imagesUrls || [],
+			images: imagesUrls,
 		});
 
 		const property = await newProperty.save();
 		await generateSitemap();
+
 		res.status(201).json({
 			message: "Property added successfully!",
 			property,
@@ -79,7 +83,10 @@ export const addProperty = async (req, res) => {
 		});
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ message: "Internal Server error" });
+		res.status(500).json({
+			message: "Internal Server Error",
+			success: false,
+		});
 	}
 };
 
@@ -180,16 +187,11 @@ export const deleteProperty = async (req, res) => {
 		}
 
 		// Extract public IDs from the URLs
-		const thumbnailPublicId = property.thumbnail
-			.split("/")
-			.slice(-1)[0]
-			.split(".")[0];
 		const imagesPublicIds = property.images.map(
 			(img) => img.split("/").slice(-1)[0].split(".")[0]
 		);
 
 		// Delete images from Cloudinary
-		await cloudinary.uploader.destroy(thumbnailPublicId);
 		for (const imgId of imagesPublicIds) {
 			await cloudinary.uploader.destroy(imgId);
 		}

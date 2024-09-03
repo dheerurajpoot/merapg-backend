@@ -43,9 +43,6 @@ const propertySchema = new mongoose.Schema(
 			type: Number,
 			required: true,
 		},
-		thumbnail: {
-			type: String,
-		},
 		images: {
 			type: [String],
 		},

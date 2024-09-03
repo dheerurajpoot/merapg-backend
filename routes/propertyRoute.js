@@ -13,10 +13,7 @@ const router = express.Router();
 
 router.post(
 	"/addproperty",
-	upload.fields([
-		{ name: "thumbnail", maxCount: 1 },
-		{ name: "images", maxCount: 10 },
-	]),
+	upload.fields([{ name: "images", maxCount: 10 }]),
 	addProperty
 );
 router.get("/", getProperties);
