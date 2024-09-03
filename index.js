@@ -25,13 +25,17 @@ dbConnect();
 
 app.use(
 	cors({
-		origin: "https://www.merapg.com",
+		origin: [
+			"https://www.merapg.com",
+			"https://merapg.com",
+			"http://localhost:5173",
+		],
 		methods: "GET, POST, PATCH, DELETE, PUT",
 		credentials: true,
 		allowedHeaders: ["Content-Type", "Authorization", "X-Custom-Header"],
 	})
 );
-
+app.options("*", cors());
 app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
