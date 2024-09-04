@@ -6,6 +6,7 @@ import dbConnect from "./utils/connectDB.js";
 import userRoute from "./routes/userRoute.js";
 import authRoute from "./routes/authRoute.js";
 import propertyRoute from "./routes/propertyRoute.js";
+import reviewRoute from "./routes/reviewRoute.js";
 import passport from "passport";
 import session from "express-session";
 import "./utils/passport.js";
@@ -61,6 +62,7 @@ app.get("/", function (req, res) {
 app.use("/api/user", userRoute);
 app.use("/auth", authRoute);
 app.use("/api/properties", propertyRoute);
+app.use("/api/review", reviewRoute);
 
 app.listen(process.env.PORT, () => {
 	console.log(`Server is listening on port ${process.env.PORT}`);
