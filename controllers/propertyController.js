@@ -47,12 +47,10 @@ export const addProperty = async (req, res) => {
 		for (const img of imagesLocalPath) {
 			const imgRes = await imgUpload(img);
 			if (!imgRes || !imgRes.secure_url) {
-				return res
-					.status(500)
-					.json({
-						message: "Failed to upload images",
-						success: false,
-					});
+				return res.status(500).json({
+					message: "Failed to upload images",
+					success: false,
+				});
 			}
 			imagesUrls.push(imgRes.secure_url);
 		}
@@ -188,14 +186,13 @@ export const deleteProperty = async (req, res) => {
 
 		// Extract public IDs from the URLs
 		const imagesPublicIds = property.images.map(
-			(img) => img.split("/").slice(-1)[0].split(".")[0]
+			(img) => img?.split("/").slice(-1)[0]?.split(".")[0]
 		);
 
 		// Delete images from Cloudinary
 		for (const imgId of imagesPublicIds) {
 			await cloudinary.uploader.destroy(imgId);
 		}
-
 		await Property.findByIdAndDelete(pId);
 
 		res.status(200).json({
