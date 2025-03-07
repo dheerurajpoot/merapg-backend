@@ -27,8 +27,7 @@ dbConnect();
 app.use(
 	cors({
 		origin: [
-			"https://www.merapg.com",
-			"https://merapg.com",
+			"https://merapg.vercel.app",
 			"http://localhost:5173",
 		],
 		methods: "GET, POST, PATCH, DELETE, PUT",
