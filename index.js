@@ -28,6 +28,7 @@ app.use(
 	cors({
 		origin: [
 			"https://merapg.vercel.app",
+			"https://www.theinfofeed.com",
 			"http://localhost:5173",
 		],
 		methods: "GET, POST, PATCH, DELETE, PUT",
